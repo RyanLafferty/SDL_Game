@@ -52,6 +52,7 @@ typedef struct bullet
 typedef struct player
 {
     int health;
+    int invTicks;
     SDL_Rect * clipSP;
     SDL_Rect * clipIMG;
     SDL_Texture * tex;
@@ -66,6 +67,7 @@ typedef struct player
 typedef struct enemy1
 {
     int health;
+    int dead;
     SDL_Rect * clipSP;
     SDL_Rect * clipIMG;
     SDL_Texture * tex;

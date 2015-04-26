@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Lafferty. All rights reserved.
 //
 //TODO: figure out how to copy resources to executable
-//TODO: add collision actions player and enemy
 //TODO: get sprites
 //TODO: randomly generate enemies
+//TODO: Documentation
 
 #include "game.h"
 
@@ -78,6 +78,16 @@ int main(int argc, const char * argv[])
         
         //update
         update(p, enemies);
+        
+        if(enemies->dead == 1)
+        {
+            running = 0;
+        }
+        
+        if(p->health <= 0)
+        {
+            running = 0;
+        }
 
         //render
         displayTextures(ren, p, enemies);

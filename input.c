@@ -61,12 +61,12 @@ int getInput(SDL_Rect * clip, SDL_Renderer * ren, player * p)
     {
         if(p->b == NULL)
         {
-            printf("init bullet");
+            //printf("init bullet");
             p->b = initBullet(ren, p);
         }
         else
         {
-            printf("adding bullet");
+            //printf("adding bullet");
             bullet * nav;
             nav = p->b;
             while(nav->next != NULL)

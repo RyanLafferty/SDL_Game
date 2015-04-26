@@ -28,6 +28,7 @@ player * initPlayer(SDL_Renderer * ren)
     }
     
     p->health = 100;
+    p->invTicks = -1;
     p->clipIMG = NULL;
     p->clipSP = NULL;
     p->tex = NULL;

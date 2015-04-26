@@ -28,6 +28,7 @@ enemy1 * initEnemy1(SDL_Renderer * ren)
     }
     
     e->health = 100;
+    e->dead = 0;
     e->clipIMG = NULL;
     e->clipSP = NULL;
     e->tex = NULL;

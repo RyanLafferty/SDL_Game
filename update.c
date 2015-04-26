@@ -15,6 +15,11 @@
  */
 void update(player * p, enemy1 * e)
 {
+    if(p->invTicks >= 0)
+    {
+        p->invTicks++;
+    }
+    
     enemyCollisions(p, e);
     playerCollisions(p, e);
     
@@ -51,6 +56,9 @@ void update(player * p, enemy1 * e)
 void enemyCollisions(player * p, enemy1 * e)
 {
     bullet * nav = p->b;
+    enemy1 * prev = NULL;
+    enemy1 * head = e;
+    enemy1 * temp = NULL;
     
     while(nav != NULL)
     {
@@ -64,12 +72,35 @@ void enemyCollisions(player * p, enemy1 * e)
                    && (nav->clipSP->y + (nav->clipSP->h / 2)) >= (e->clipSP->y)
                    && (nav->clipSP->y + (nav->clipSP->h / 2)) <= (e->clipSP->y + (e->clipSP->h)))
                 {
-                    printf("enemy collision\n");
-                    //figure out what to do on collision
+                    //printf("enemy collision\n");
+                    if(e == head)
+                    {
+                        if(e->next == NULL)
+                        {
+                            e->dead = 1;
+                            e = NULL;
+                        }
+                        else
+                        {
+                            *temp = *e;
+                            *e = *e->next;
+                            destroyEnemy1(temp);
+                        }
+                    }
+                    else
+                    {
+                        *temp = *e;
+                        if(e->next != NULL)
+                        {
+                            *e = *e->next;
+                        }
+                        destroyEnemy1(temp);
+                    }
                 }
                 
-                if(e->next != NULL)
+                if(e != NULL && e->next != NULL)
                 {
+                    prev = e;
                     e = e->next;
                 }
                 else
@@ -93,14 +124,27 @@ void playerCollisions(player * p, enemy1 * e)
     {
         if(e->clipSP != NULL)
         {
-            //printf("a\n");
             if((p->clipSP->x + p->clipSP->w) >= (e->clipSP->x)
                && (p->clipSP->x + p->clipSP->w) <= (e->clipSP->x + e->clipSP->w)
                && (p->clipSP->y + (p->clipSP->h / 2)) >= (e->clipSP->y)
                && (p->clipSP->y + (p->clipSP->h / 2)) <= (e->clipSP->y + (e->clipSP->h)))
             {
-                printf("collision\n");
-                //figure out what to do on collision
+                if(p->invTicks >= (FPS*1.35))
+                {
+                    p->invTicks = -1;
+                }
+                
+                if(p->invTicks >= 0)
+                {
+                    p->invTicks++;
+                }
+                else
+                {
+                    p->health -= 10;
+                    p->invTicks = 0;
+                }
+                
+                return;
             }
             
             if(e->next != NULL)

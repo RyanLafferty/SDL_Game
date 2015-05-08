@@ -13,8 +13,11 @@
  Args:
  Ret:
  */
-void update(player * p, enemy1 * e)
+void update(player * p, enemy1 * e, SDL_Renderer * ren)
 {
+    enemy1 * prev = NULL;
+    int enemyCount = 0;
+    
     if(p->invTicks >= 0)
     {
         p->invTicks++;
@@ -33,18 +36,29 @@ void update(player * p, enemy1 * e)
             }
             else
             {
-                e->clipSP->x = SCREEN_WIDTH + (e->clipSP->x - ENEMY_SPEED);
-            }
-            
-            if(e->next != NULL)
-            {
-                e = e->next;
-            }
-            else
-            {
-                e = NULL;
+                //e->clipSP->x = SCREEN_WIDTH + (e->clipSP->x - ENEMY_SPEED);
+                e->dead = 1;
             }
         }
+        
+        if(e != NULL && e->next != NULL)
+        {
+            prev = e;
+            e = e->next;
+        }
+        else if(e == NULL)
+        {
+            e = NULL;
+        }
+        else
+        {
+            if(enemyCount <= 3)
+            {
+                e->next = initEnemy1(ren);
+            }
+            e = NULL;
+        }
+        enemyCount++;
     }
 }
 
@@ -58,7 +72,6 @@ void enemyCollisions(player * p, enemy1 * e)
     bullet * nav = p->b;
     enemy1 * prev = NULL;
     enemy1 * head = e;
-    enemy1 * temp = NULL;
     
     while(nav != NULL)
     {
@@ -82,19 +95,12 @@ void enemyCollisions(player * p, enemy1 * e)
                         }
                         else
                         {
-                            *temp = *e;
-                            *e = *e->next;
-                            destroyEnemy1(temp);
+                            e->dead = 1;
                         }
                     }
                     else
                     {
-                        *temp = *e;
-                        if(e->next != NULL)
-                        {
-                            *e = *e->next;
-                        }
-                        destroyEnemy1(temp);
+                        e->dead = 1;
                     }
                 }
                 
@@ -157,5 +163,4 @@ void playerCollisions(player * p, enemy1 * e)
             }
         }
     }
-    
 }

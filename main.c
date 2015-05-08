@@ -5,9 +5,9 @@
 //  Created by Lafferty on 2015-04-16.
 //  Copyright (c) 2015 Lafferty. All rights reserved.
 //
+//TODO: Test memory leaks
 //TODO: figure out how to copy resources to executable
 //TODO: get sprites
-//TODO: randomly generate enemies
 //TODO: Documentation
 
 #include "game.h"
@@ -19,6 +19,10 @@ int main(int argc, const char * argv[])
     Uint32 timer;
     player * p;
     enemy1 * enemies;
+    enemy1 * nav;
+    enemy1 * temp;
+    enemy1 * temp2;
+    enemy1 * prev;
     bullet * bullets;
     
     succ = 0;
@@ -26,6 +30,10 @@ int main(int argc, const char * argv[])
     timer = 0;
     p = NULL;
     enemies = NULL;
+    nav = NULL;
+    temp = NULL;
+    temp2 = NULL;
+    prev = NULL;
     bullets = NULL;
     
     succ = initSDL();
@@ -69,6 +77,8 @@ int main(int argc, const char * argv[])
         return 1;
     }
     
+    p->health = 9999;
+    
     while(running == 1)
     {
         timer = SDL_GetTicks();
@@ -77,11 +87,88 @@ int main(int argc, const char * argv[])
         running = getInput(p->clipSP, ren, p);
         
         //update
-        update(p, enemies);
+        update(p, enemies, ren);
         
         if(enemies->dead == 1)
         {
-            running = 0;
+            //running = 0;
+            destroyEnemy1(enemies);
+            enemies = initEnemy1(ren);
+            if(enemies == NULL)
+            {
+                printf("Error: Could not create enemies!\n");
+                return 0;
+            }
+        }
+        else
+        {
+            nav = enemies;
+            while(nav != NULL && nav->next != NULL)
+            {
+                if(nav->dead == 1)
+                {
+                    if(nav == enemies)
+                    {
+                        if(nav->next == NULL)
+                        {
+                            destroyEnemy1(enemies);
+                            enemies = initEnemy1(ren);
+                            nav->next = NULL;
+                            nav = enemies;
+                        }
+                        else
+                        {
+                            temp = enemies;
+                            temp2 = nav->next;
+                            destroyEnemy1(enemies);
+                            enemies = temp2;
+                            nav = enemies;
+                        }
+                    }
+                    else
+                    {
+                        temp = nav;
+                        temp2 = nav->next;
+                        nav = nav->next;
+                        destroyEnemy1(temp);
+                        prev->next = nav;
+                    }
+                }
+                
+                prev = nav;
+                nav = nav->next;
+            }
+            
+            if(nav!= NULL && nav->dead == 1)
+            {
+                if(nav == enemies)
+                {
+                    if(nav->next == NULL)
+                    {
+                        destroyEnemy1(enemies);
+                        enemies = initEnemy1(ren);
+                        nav->next = NULL;
+                        nav = NULL;
+                        break;
+                    }
+                    else
+                    {
+                        temp = enemies;
+                        temp2 = nav->next;
+                        nav = nav->next;
+                        destroyEnemy1(enemies);
+                        enemies = temp2;
+                    }
+                }
+                else
+                {
+                    temp = nav;
+                    temp2 = nav->next;
+                    nav = nav->next;
+                    destroyEnemy1(temp);
+                    prev->next = nav;
+                }
+            }
         }
         
         if(p->health <= 0)

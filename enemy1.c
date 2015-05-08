@@ -47,7 +47,7 @@ enemy1 * initEnemy1(SDL_Renderer * ren)
     e->clipSP->h = 75;
     e->clipSP->w = 50;
     e->clipSP->x = SCREEN_WIDTH - 50;
-    e->clipSP->y = (SCREEN_HEIGHT / 2);
+    e->clipSP->y = rand() % (SCREEN_HEIGHT);
     
     
     //load texture for player (arrow image is a place holder)

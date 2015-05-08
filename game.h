@@ -85,7 +85,7 @@ void clean(player * p, enemy1 * e);
 int getInput(SDL_Rect * clip, SDL_Renderer * ren, player * p);
 
 //update
-void update(player * p, enemy1 * e);
+void update(player * p, enemy1 * e, SDL_Renderer * ren);
 void enemyCollisions(player * p, enemy1 * e);
 void playerCollisions(player * p, enemy1 * e);
 
